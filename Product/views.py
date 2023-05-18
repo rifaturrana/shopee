@@ -15,6 +15,17 @@ def product_details(request,product_id):
       product=Product.objects.get(id=product_id)
     except Product.DoesNotExist:
         return HttpResponse("Product Not Found")
+    if request.method=="POST":
+        review=Review.objects.create(product=product,user=request.user,rating=request.POST['rating'],review=request.POST['review'])
+        review.save()
+    reviews=Review.objects.filter(product=product)
+    average_rating=0
+    if reviews:
+        average_rating=sum([review.rating for review in reviews])/len(reviews)
+        average_rating=round(average_rating,1)
+
     return render(request,'product/product_details.html',{
-        'product':product
+        'product':product,
+         'reviews': reviews, 
+         'average_rating': average_rating
     })
