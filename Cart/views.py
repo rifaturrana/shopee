@@ -71,3 +71,10 @@ def order_detail(request,order_id):
     order=Order.objects.get(id=order_id)
     items=order.items.all()
     return render(request,'cart/order_detail.html',{'order':order,'items':items,'total':order.total})
+
+
+def order_list(request):
+    if not request.user.is_authenticated:
+        return redirect('signup')
+    orders=Order.objects.filter(user=request.user,order_status='Order Received')
+    return render(request,'cart/order_list.html',{'orders':orders})
